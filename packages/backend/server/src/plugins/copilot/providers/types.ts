@@ -14,6 +14,7 @@ export enum CopilotProviderType {
   OpenAI = 'openai',
   Perplexity = 'perplexity',
   Morph = 'morph',
+  IRE = 'ire',
 }
 
 export const CopilotProviderSchema = z.object({
@@ -175,8 +176,10 @@ export type StreamObject = z.infer<typeof StreamObjectSchema>;
 const CopilotProviderOptionsSchema = z.object({
   signal: z.instanceof(AbortSignal).optional(),
   user: z.string().optional(),
+  userEmail: z.string().optional(),
   session: z.string().optional(),
   workspace: z.string().optional(),
+  authToken: z.string().optional(),
 });
 
 export const CopilotChatOptionsSchema = CopilotProviderOptionsSchema.merge(

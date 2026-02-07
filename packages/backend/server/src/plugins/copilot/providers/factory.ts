@@ -19,8 +19,12 @@ export class CopilotProviderFactory {
     } = {}
   ): Promise<CopilotProvider | null> {
     this.logger.debug(
-      `Resolving copilot provider for output type: ${cond.outputType}`
+      `Resolving copilot provider for modelId: ${cond.modelId}, outputType: ${cond.outputType}`
     );
+    this.logger.debug(
+      `Registered providers: ${Array.from(this.#providers.keys()).join(', ')}`
+    );
+
     let candidate: CopilotProvider | null = null;
     for (const [type, provider] of this.#providers.entries()) {
       if (filter.prefer && filter.prefer !== type) {
@@ -28,12 +32,17 @@ export class CopilotProviderFactory {
       }
 
       const isMatched = await provider.match(cond);
+      this.logger.debug(`Provider [${type}] match result: ${isMatched}`);
 
       if (isMatched) {
         candidate = provider;
         this.logger.debug(`Copilot provider candidate found: ${type}`);
         break;
       }
+    }
+
+    if (!candidate) {
+      this.logger.warn(`No provider found for cond: ${JSON.stringify(cond)}`);
     }
 
     return candidate;

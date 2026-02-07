@@ -1905,6 +1905,7 @@ const CHAT_PROMPT: Omit<Prompt, 'name'> = {
     'gemini-2.5-flash',
     'gemini-2.5-pro',
     'claude-sonnet-4-5@20250929',
+    'ire-default',
   ],
   messages: [
     {
@@ -2105,7 +2106,7 @@ export async function refreshPrompts(db: PrismaClient) {
     // skip prompt update if already modified by admin panel
     if (needToSkip.includes(prompt.name)) {
       new Logger('CopilotPrompt').warn(`Skip modified prompt: ${prompt.name}`);
-      return;
+      continue;
     }
 
     await db.aiPrompt.upsert({

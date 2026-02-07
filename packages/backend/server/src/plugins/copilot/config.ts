@@ -10,6 +10,7 @@ import {
 } from './providers/anthropic';
 import type { FalConfig } from './providers/fal';
 import { GeminiGenerativeConfig, GeminiVertexConfig } from './providers/gemini';
+import { IREConfig } from './providers/ire';
 import { MorphConfig } from './providers/morph';
 import { OpenAIConfig } from './providers/openai';
 import { PerplexityConfig } from './providers/perplexity';
@@ -35,6 +36,7 @@ declare global {
         anthropic: ConfigItem<AnthropicOfficialConfig>;
         anthropicVertex: ConfigItem<AnthropicVertexConfig>;
         morph: ConfigItem<MorphConfig>;
+        ire: ConfigItem<IREConfig>;
       };
     };
   }
@@ -43,23 +45,23 @@ declare global {
 defineModuleConfig('copilot', {
   enabled: {
     desc: 'Whether to enable the copilot plugin. <br> Document: <a href="https://docs.affine.pro/self-host-affine/administer/ai" target="_blank">https://docs.affine.pro/self-host-affine/administer/ai</a>',
-    default: false,
+    default: true,
   },
   scenarios: {
     desc: 'Use custom models in scenarios and override default settings.',
     default: {
-      override_enabled: false,
+      override_enabled: true,
       scenarios: {
         audio_transcribing: 'gemini-2.5-flash',
-        chat: 'gemini-2.5-flash',
+        chat: 'ire-default',
         embedding: 'gemini-embedding-001',
         image: 'gpt-image-1',
         rerank: 'gpt-4.1',
-        coding: 'claude-sonnet-4-5@20250929',
-        complex_text_generation: 'gpt-4o-2024-08-06',
-        quick_decision_making: 'gpt-5-mini',
-        quick_text_generation: 'gemini-2.5-flash',
-        polish_and_summarize: 'gemini-2.5-flash',
+        coding: 'ire-default',
+        complex_text_generation: 'ire-default',
+        quick_decision_making: 'ire-default',
+        quick_text_generation: 'ire-default',
+        polish_and_summarize: 'ire-default',
       },
     },
   },
@@ -110,6 +112,12 @@ defineModuleConfig('copilot', {
   'providers.morph': {
     desc: 'The config for the morph provider.',
     default: {},
+  },
+  'providers.ire': {
+    desc: 'The config for the IRE provider.',
+    default: {
+      baseUrl: 'http://localhost:8000',
+    },
   },
   unsplash: {
     desc: 'The config for the unsplash key.',

@@ -265,14 +265,22 @@ export class CopilotController implements BeforeApplicationShutdown {
       info.finalMessage = finalMessage.filter(m => m.role !== 'system');
       metrics.ai.counter('chat_calls').add(1, { model });
 
+      const authHeader = req.get('Authorization');
+      this.logger.debug(
+        `CopilotController.chat: Authorization header present: ${!!authHeader}`
+      );
+
       const { reasoning, webSearch, toolsConfig } =
         ChatQuerySchema.parse(query);
+
       const content = await provider.text({ modelId: model }, finalMessage, {
         ...session.config.promptConfig,
         signal: getSignal(req).signal,
         user: user.id,
+        userEmail: user.email,
         session: session.config.sessionId,
         workspace: session.config.workspaceId,
+        authToken: authHeader,
         reasoning,
         webSearch,
         tools: getTools(session.config.promptConfig?.tools, toolsConfig),
@@ -332,13 +340,20 @@ export class CopilotController implements BeforeApplicationShutdown {
       const { messageId, reasoning, webSearch, toolsConfig } =
         ChatQuerySchema.parse(query);
 
+      const authHeader = req.get('Authorization');
+      this.logger.debug(
+        `CopilotController.chatStream: Authorization header present: ${!!authHeader}`
+      );
+
       const source$ = from(
         provider.streamText({ modelId: model }, finalMessage, {
           ...session.config.promptConfig,
           signal,
           user: user.id,
+          userEmail: user.email,
           session: session.config.sessionId,
           workspace: session.config.workspaceId,
+          authToken: authHeader,
           reasoning,
           webSearch,
           tools: getTools(session.config.promptConfig?.tools, toolsConfig),
@@ -426,13 +441,20 @@ export class CopilotController implements BeforeApplicationShutdown {
       const { messageId, reasoning, webSearch, toolsConfig } =
         ChatQuerySchema.parse(query);
 
+      const authHeader = req.get('Authorization');
+      this.logger.debug(
+        `CopilotController.chatStreamObject: Authorization header present: ${!!authHeader}`
+      );
+
       const source$ = from(
         provider.streamObject({ modelId: model }, finalMessage, {
           ...session.config.promptConfig,
           signal,
           user: user.id,
+          userEmail: user.email,
           session: session.config.sessionId,
           workspace: session.config.workspaceId,
+          authToken: authHeader,
           reasoning,
           webSearch,
           tools: getTools(session.config.promptConfig?.tools, toolsConfig),

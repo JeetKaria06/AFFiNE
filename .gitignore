@@ -92,3 +92,5 @@ af.cmd
 
 # playwright
 storageState.json
+
+.bootstrap
